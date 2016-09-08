@@ -3,10 +3,10 @@ require 'csv'
 
 filename = ARGV.first
 
-done_list_id = '557061bda6ad0c1728f88ba2'
-migrated_cards = Array.new
+cards = Array.new
 lists = Hash.new
 members = Hash.new
+custom_fields = Hash.new
 
 File.open(filename, 'r') do | f |
   
@@ -19,19 +19,32 @@ File.open(filename, 'r') do | f |
 
   board['members'].each do | member |
    members[member['id']] = member['fullName']
-  end 
-
-  migrated_cards = board["cards"].find_all do | card |
-    card['idList'] == done_list_id
   end
+
+  board['pluginData'].each do | data |
+    values = JSON.parse(data['value'])
+    values['fields'].each do | value |
+      custom_fields[value['id']] = value['n']
+    end
+  end
+
+  cards = board['cards']
 
 end
 
-migrated_cards.each do | card |
+cards.each do | card |
 
   # Enrich card data
   card['listName'] = lists[card['idList']]
   card['memberNames'] = card['idMembers'].map { |mem| members[mem] }
+  unless card['pluginData'].empty?
+    card['pluginData'].each do | data |
+      cust_fields = JSON.parse(data['value'])
+      cust_fields['fields'].each do | key, val |
+        card[custom_fields[key.to_i]] = val
+      end
+    end
+  end
 
   # Delete the unwanted data
   card.delete("idList") { |el| "#{el} not found" }
@@ -51,14 +64,15 @@ migrated_cards.each do | card |
   card.delete("email") { |el| "#{el} not found" }
   card.delete("shortUrl") { |el| "#{el} not found" }
   card.delete("subscribed") { |el| "#{el} not found" }
+  card.delete("pluginData") { |el| "#{el} not found" }
 
 end
 
-CSV.open('migrated_cards.csv', 'wb') do | csv |
+CSV.open('trello_cards.csv', 'wb') do | csv |
   
-  csv << migrated_cards.first.keys
+  csv << cards.first.keys
   
-  migrated_cards.each do | card |
+  cards.each do | card |
     csv << card.values
   end
 
