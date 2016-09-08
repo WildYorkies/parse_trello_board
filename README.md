@@ -13,7 +13,7 @@ Go to your Trello board. Click:
 - "Print and Export"
 - "Export JSON"
 
-Download this ruby script and place it in the same directory as your JSON file.
+Download the file `parse_trello_json.rb` from this repository and place it in the same directory as your JSON file.
 
 Open your command prompt or terminal and run
 
