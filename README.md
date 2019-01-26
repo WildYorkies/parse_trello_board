@@ -1,8 +1,8 @@
 # Don't want to pay for Trello Business Class just to get your board data in CSV?
 
-Use this script to download your card data!
+Use this script to download your card data
 
-It will even grab your custom fields (new trello power up) and put them in their own column!
+It will even grab your custom fields (new trello power up) and put them in their own column
 
 ## Instructions
 
@@ -21,4 +21,3 @@ Open your command prompt or terminal and run
 
 You will find that there is now a CSV file called `trello_cards.csv` in the same directory as other files.
 
-Open an issue if you have one!
